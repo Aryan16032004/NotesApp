@@ -13,9 +13,30 @@ const router = express.Router();
 
 // Email signup: generate OTP and send
 router.post('/signup', async (req, res) => {
-  const { name, email } = req.body;
-  // Validate input
-  if (!name || !email) return res.status(400).json({ message: 'Name and email required' });
+  const { name, email, dateOfBirth } = req.body;
+  if (!email) return res.status(400).json({ message: 'Email required' });
+  let user = await User.findOne({ email });
+  if (user) {
+    // Existing user: allow OTP for sign-in
+    // Generate OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
+    await OTP.create({ email, otp, expiresAt });
+    // Send OTP
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+    });
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Your OTP',
+      text: `Your OTP is ${otp}`
+    });
+    return res.json({ message: 'OTP sent to email' });
+  }
+  // New user: require name and email
+  if (!name) return res.status(400).json({ message: 'Name required for signup' });
   // Generate OTP
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
@@ -36,13 +57,17 @@ router.post('/signup', async (req, res) => {
 
 // Verify OTP and create user
 router.post('/verify-otp', async (req, res) => {
-  const { name, email, password, otp } = req.body;
-  if (!password) return res.status(400).json({ message: 'Password required' });
+  const { name, email, otp, dateOfBirth } = req.body;
   const otpDoc = await OTP.findOne({ email, otp });
   if (!otpDoc || otpDoc.expiresAt < new Date()) return res.status(400).json({ message: 'Invalid or expired OTP' });
   await OTP.deleteOne({ _id: otpDoc._id });
-  const hashed = await bcrypt.hash(password, 10);
-  const user = await User.create({ name, email, password: hashed });
+  let user = await User.findOne({ email });
+  if (!user) {
+    user = await User.create({ name: name || 'User', email, dateOfBirth });
+  } else if (dateOfBirth && !user.dateOfBirth) {
+    user.dateOfBirth = dateOfBirth;
+    await user.save();
+  }
   const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET || '', { expiresIn: '1d' });
   res.json({ token });
 });
@@ -66,7 +91,17 @@ passport.use(new GoogleStrategy({
 }, async (accessToken, refreshToken, profile, done) => {
   let user = await User.findOne({ googleId: profile.id });
   if (!user) {
-    user = await User.create({ name: profile.displayName, email: profile.emails?.[0].value, googleId: profile.id });
+    // Try to find user by email
+    const email = profile.emails?.[0].value;
+    user = await User.findOne({ email });
+    if (user) {
+      // Link Google account to existing user
+      user.googleId = profile.id;
+      await user.save();
+    } else {
+      // Create new user
+      user = await User.create({ name: profile.displayName, email, googleId: profile.id });
+    }
   }
   return done(null, user);
 }));
@@ -77,7 +112,7 @@ router.get('/google/callback', passport.authenticate('google', { session: false 
   const user = req.user;
   if (!user) return res.status(400).json({ message: 'Google login failed' });
   const token = jwt.sign({ id: (user as any)._id, email: (user as any).email }, process.env.JWT_SECRET || '', { expiresIn: '1d' });
-  res.redirect(`${process.env.FRONTEND_URL}/welcome?token=${token}`);
+  res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
 });
 
 // Get user info
