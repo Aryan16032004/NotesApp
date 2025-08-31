@@ -10,6 +10,6 @@ mongoose.connect(MONGODB_URI)
       console.log(`Server running on port ${PORT}`);
     });
   })
-  .catch((err) => {
+  .catch((err: unknown) => {
     console.error('MongoDB connection error:', err);
   });

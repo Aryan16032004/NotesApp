@@ -12,7 +12,8 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 const router = express.Router();
 
 // Email signup: generate OTP and send
-router.post('/signup', async (req, res) => {
+import { Request, Response } from 'express';
+router.post('/signup', async (req: Request, res: Response) => {
   const { name, email, dateOfBirth } = req.body;
   if (!email) return res.status(400).json({ message: 'Email required' });
   let user = await User.findOne({ email });
@@ -56,7 +57,7 @@ router.post('/signup', async (req, res) => {
 });
 
 // Verify OTP and create user
-router.post('/verify-otp', async (req, res) => {
+router.post('/verify-otp', async (req: Request, res: Response) => {
   const { name, email, otp, dateOfBirth } = req.body;
   const otpDoc = await OTP.findOne({ email, otp });
   if (!otpDoc || otpDoc.expiresAt < new Date()) return res.status(400).json({ message: 'Invalid or expired OTP' });
@@ -73,7 +74,7 @@ router.post('/verify-otp', async (req, res) => {
 });
 
 // Email login
-router.post('/login', async (req, res) => {
+router.post('/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user || !user.password) return res.status(400).json({ message: 'User not found' });
