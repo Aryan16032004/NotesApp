@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import axios from 'axios';
+import icon from '../assets/icon.png';
+import container from '../assets/container.jpg';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -48,7 +50,7 @@ export default function SignUpForm() {
         otp
       });
       localStorage.setItem('token', res.data.token);
-      window.location.href = '/dashboard';
+      window.location.href = '/';
     } catch (err: any) {
       setError(err.response?.data?.message || 'OTP verification failed');
     } finally {
@@ -61,18 +63,22 @@ export default function SignUpForm() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-50">
       {/* Left side - Form */}
-      <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-4 md:p-8">
-        <div className="w-full max-w-md">
-          {/* Header */}
-          <div className="mb-6 md:mb-8">
+      <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12 min-h-screen lg:min-h-auto relative">
+        {/* Dotted border - hidden on mobile, visible on desktop */}
+        <div className="hidden lg:block absolute inset-6 xl:inset-8 border-blue-300 rounded-lg"></div>
+        
+        <div className="w-full max-w-md relative z-10">
+          {/* Header with HD Logo */}
+          <div className="mb-6 md:mb-8 relative">
             <div className="flex items-center mb-6">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
-                <span className="text-white text-sm font-bold">HD</span>
-              </div>
+               <div className="absolute bottom-50 -left-50 flex items-center">
+              <img className="w-6 h-6 mr-2" src={icon} alt="icon" />
+              <span className='text-shadow-black font-bold text-1xl'>HD</span>
             </div>
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">Sign up</h1>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">Sign up</h1>
             <p className="text-gray-500 text-sm">Sign up to enjoy the feature of HD</p>
           </div>
 
@@ -89,7 +95,7 @@ export default function SignUpForm() {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 transition-all duration-200"
                 placeholder="Enter your name"
               />
             </div>
@@ -105,7 +111,7 @@ export default function SignUpForm() {
                 name="dateOfBirth"
                 value={formData.dateOfBirth}
                 onChange={handleInputChange}
-                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 transition-all duration-200"
               />
             </div>
 
@@ -120,7 +126,7 @@ export default function SignUpForm() {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 transition-all duration-200"
                 placeholder="Enter your email"
               />
             </div>
@@ -129,7 +135,7 @@ export default function SignUpForm() {
             {!otpSent ? (
               <button
                 onClick={handleGetOTP}
-                disabled={isLoading}
+                disabled={isLoading || !formData.name || !formData.email}
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Sending OTP...' : 'Get OTP'}
@@ -146,13 +152,13 @@ export default function SignUpForm() {
                     name="otp"
                     value={otp}
                     onChange={e => setOtp(e.target.value)}
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 transition-all duration-200"
                     placeholder="Enter OTP"
                   />
                 </div>
                 <button
                   onClick={handleVerifyOTP}
-                  disabled={isLoading}
+                  disabled={isLoading || !otp}
                   className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? 'Verifying...' : 'Verify OTP'}
@@ -179,7 +185,7 @@ export default function SignUpForm() {
             <div className="text-center">
               <span className="text-sm text-gray-500">
                 Already have an account?{' '}
-                <a href="/signin" className="text-blue-500 hover:text-blue-600 font-medium">
+                <a href="/signin" className="text-blue-500 hover:text-blue-600 font-medium transition-colors duration-200">
                   Sign In
                 </a>
               </span>
@@ -189,30 +195,13 @@ export default function SignUpForm() {
         </div>
       </div>
 
-      {/* Right side - Flowing Background */}
-      <div className="w-full md:w-1/2 relative overflow-hidden min-h-[300px] md:min-h-auto">
-        {/* Animated flowing background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-950">
-          {/* Flowing wave animation */}
-          <div className="absolute inset-0 opacity-20 wave-animation">
-            <div className="wave wave-1"></div>
-            <div className="wave wave-2"></div>
-            <div className="wave wave-3"></div>
-          </div>
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-blue-950/60 via-transparent to-blue-900/40"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-blue-950/30 via-transparent to-transparent"></div>
-        
-        {/* Content for the right side (visible on desktop) */}
-        <div className="hidden md:flex flex-col items-center justify-center h-full relative z-10 p-8 text-white">
-          <h2 className="text-2xl font-bold mb-4">Join Us!</h2>
-          <p className="text-center max-w-md">Create an account to access all features and personalize your experience.</p>
-        </div>
-        
-        {/* Mobile-only message */}
-        <div className="md:hidden absolute bottom-4 left-0 right-0 text-center text-white z-10 px-4">
-          <p>Create an account to access all features.</p>
-        </div>
+      {/* Right side - Background Image (Hidden on mobile) */}
+      <div className="hidden lg:block w-1/2 relative overflow-hidden">
+        <img 
+          src={container} 
+          alt="Background" 
+          className="w-full h-full object-cover object-center absolute inset-0"
+        />
       </div>
     </div>
   );

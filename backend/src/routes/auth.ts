@@ -112,7 +112,7 @@ router.get('/google/callback', passport.authenticate('google', { session: false 
   const user = req.user;
   if (!user) return res.status(400).json({ message: 'Google login failed' });
   const token = jwt.sign({ id: (user as any)._id, email: (user as any).email }, process.env.JWT_SECRET || '', { expiresIn: '1d' });
-  res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
+  res.redirect(`${process.env.FRONTEND_URL}/?token=${token}`);
 });
 
 // Get user info

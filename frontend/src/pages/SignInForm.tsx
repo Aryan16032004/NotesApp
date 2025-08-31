@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import axios from 'axios';
+import icon from '../assets/icon.png';
+import container from '../assets/container.jpg'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -37,7 +39,7 @@ export default function SignInForm() {
     try {
       const res = await axios.post(`${API}/auth/verify-otp`, { email: formData.email, otp: formData.otp });
       localStorage.setItem('token', res.data.token);
-      window.location.href = '/dashboard';
+      window.location.href = '/';
     } catch (err: any) {
       setError(err.response?.data?.message || 'Sign in failed');
     } finally {
@@ -50,19 +52,20 @@ export default function SignInForm() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
+    <div className="min-w-screen min-h-screen flex flex-col lg:flex-row bg-gray-50">
       {/* Left side - Form */}
-      <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-4 md:p-8 relative">
+      <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12 min-h-screen lg:min-h-auto relative">
         {/* Dotted border - hidden on mobile, visible on desktop */}
-        <div className="hidden md:block absolute inset-4 border-2 border-dashed border-blue-300 rounded-lg"></div>
+        <div className="hidden lg:block absolute inset-6 xl:inset-8 border-blue-300 rounded-lg"></div>
+        
         <div className="w-full max-w-sm relative z-10">
           {/* Header with HD Logo */}
-          <div className="mb-6 md:mb-8">
+          <div className="mb-6 md:mb-8 relative">
             <div className="flex items-center mb-6">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-2">
-                <span className="text-white text-sm font-bold">*</span>
+              <div className="absolute bottom-80 -left-60 flex items-center">
+                <img className="w-6 h-6 mr-2" src={icon} alt="icon" />
+                <span className='text-shadow-black font-bold text-1xl'>HD</span>
               </div>
-              <span className="text-blue-500 font-semibold text-lg">HD</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">Sign in</h1>
             <p className="text-gray-500 text-sm">Please login to continue to your account.</p>
@@ -80,13 +83,9 @@ export default function SignInForm() {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full px-0 py-2 border-0 border-b border-gray-300 focus:outline-none focus:border-blue-500 text-gray-900 bg-transparent"
+                className="w-full px-0 py-2 border-0 border-b border-gray-300 focus:outline-none focus:border-blue-500 text-gray-900 bg-transparent transition-colors duration-200"
                 placeholder="Enter your email"
               />
-              {/* Profile Avatar */}
-              <div className="absolute right-0 top-6 w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-semibold">R</span>
-              </div>
             </div>
 
             {/* Send OTP Button */}
@@ -112,13 +111,13 @@ export default function SignInForm() {
                     name="otp"
                     value={formData.otp}
                     onChange={handleInputChange}
-                    className="w-full px-0 py-2 border-0 border-b border-gray-300 focus:outline-none focus:border-blue-500 text-gray-900 bg-transparent pr-8"
+                    className="w-full px-0 py-2 border-0 border-b border-gray-300 focus:outline-none focus:border-blue-500 text-gray-900 bg-transparent pr-8 transition-colors duration-200"
                     placeholder="Enter OTP"
                   />
                   <button
                     type="button"
                     onClick={() => setShowOTP(!showOTP)}
-                    className="absolute right-0 top-2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-0 top-2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
                   >
                     {showOTP ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -149,40 +148,23 @@ export default function SignInForm() {
             <div className="text-center">
               <span className="text-sm text-gray-500">
                 Need an account?{' '}
-                <a href="/signup" className="text-blue-500 hover:text-blue-600 font-medium">
+                <a href="/signup" className="text-blue-500 hover:text-blue-600 font-medium transition-colors duration-200">
                   Create one
                 </a>
               </span>
             </div>
-            {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+            {error && <div className="text-red-500 text-sm text-center mt-2">{error}</div>}
           </div>
         </div>
       </div>
 
-      {/* Right side - Flowing Background */}
-      <div className="w-full md:w-1/2 relative overflow-hidden min-h-[300px] md:min-h-auto">
-        {/* Animated flowing background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-950">
-          {/* Flowing wave animation */}
-          <div className="absolute inset-0 opacity-20 wave-animation">
-            <div className="wave wave-1"></div>
-            <div className="wave wave-2"></div>
-            <div className="wave wave-3"></div>
-          </div>
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-blue-950/60 via-transparent to-blue-900/40"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-blue-950/30 via-transparent to-transparent"></div>
-        
-        {/* Content for the right side (visible on desktop) */}
-        <div className="hidden md:flex flex-col items-center justify-center h-full relative z-10 p-8 text-white">
-          <h2 className="text-2xl font-bold mb-4">Welcome Back!</h2>
-          <p className="text-center max-w-md">Sign in to access your notes and personalized features.</p>
-        </div>
-        
-        {/* Mobile-only message */}
-        <div className="md:hidden absolute bottom-4 left-0 right-0 text-center text-white z-10 px-4">
-          <p>Sign in to access your notes.</p>
-        </div>
+      {/* Right side - Background Image (Hidden on mobile) */}
+      <div className="hidden lg:block w-1/2 relative overflow-hidden">
+        <img 
+          src={container} 
+          alt="Background" 
+          className="w-full h-full object-cover object-center absolute inset-0"
+        />
       </div>
     </div>
   );

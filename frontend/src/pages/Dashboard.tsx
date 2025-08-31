@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Trash2, Plus, Menu, Bell, Wifi, Battery, Signal } from 'lucide-react';
 import axios from 'axios';
+import icon from '../assets/icon.png';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -53,28 +54,19 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Mobile Status Bar - Only visible on mobile */}
-      <div className="md:hidden bg-white px-4 py-2 flex justify-between items-center text-sm font-medium">
-        <span>9:41</span>
-        <div className="flex items-center space-x-1">
-          <Signal size={14} />
-          <Wifi size={14} />
-          <Battery size={14} />
-        </div>
-      </div>
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-bold">*</span>
-              </div>
-              <h1 className="text-xl font-semibold text-gray-900 hidden sm:block">Dashboard</h1>
+        <div className="ml-6 mr-6  md:mb-8 p-5 relative ml flex justify-between">
+          <div className="flex items-center mb-6">
+            <div className="flex items-center">
+              <img className="w-6 h-6 mr-2" src={icon} alt="icon" />
+              <span className='text-shadow-black font-bold text-xl'>HD</span>
             </div>
-            <button onClick={handleSignOut} className="text-blue-500 hover:text-blue-600 font-medium text-sm transition-colors">Sign Out</button>
+          </div>
+          <div>
+            <button onClick={handleSignOut} className="text-blue-500 hover:text-blue-600 hover:cursor-pointer font-medium text-2xl transition-colors">Sign Out</button>
           </div>
         </div>
-      </header>
+       
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <h2 className="text-2xl font-semibold text-gray-900 mb-2">Welcome, {user?.name || ''}!</h2>
@@ -82,7 +74,7 @@ export default function Dashboard() {
         </div>
         <div className="mb-6 flex gap-2 flex-col sm:flex-row">
           <input value={noteContent} onChange={e => setNoteContent(e.target.value)} className="flex-1 px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900" placeholder="Enter note content" />
-          <button onClick={handleCreateNote} className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center space-x-2">
+          <button onClick={handleCreateNote} className="hover:cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center space-x-2">
             <Plus size={20} />
             <span>Create Note</span>
           </button>
@@ -108,27 +100,7 @@ export default function Dashboard() {
           <div className="w-32 h-1 bg-gray-300 rounded-full"></div>
         </div>
       </main>
-      <div className="hidden lg:block fixed top-0 left-0 w-64 h-full bg-white shadow-lg border-r border-gray-200 z-10">
-        <div className="p-6">
-          <div className="flex items-center space-x-3 mb-8">
-            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold">*</span>
-            </div>
-            <span className="text-xl font-semibold text-gray-900">HD</span>
-          </div>
-          <nav className="space-y-2">
-            <a href="/dashboard" className="block px-4 py-2 text-blue-500 bg-blue-50 rounded-lg font-medium">Dashboard</a>
-            <a href="#" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">Notes</a>
-            <a href="#" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">Settings</a>
-          </nav>
-        </div>
-      </div>
-      <style jsx>{`
-        @media (min-width: 1024px) {
-          main { margin-left: 16rem; }
-          header { margin-left: 16rem; }
-        }
-      `}</style>
+      
     </div>
   );
 }
