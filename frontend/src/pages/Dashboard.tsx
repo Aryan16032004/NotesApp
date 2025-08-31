@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Trash2, Plus, Menu, Bell, Wifi, Battery, Signal } from 'lucide-react';
+import { Trash2, Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import icon from '../assets/icon.png';
 
@@ -9,7 +9,7 @@ export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
   const [notes, setNotes] = useState<any[]>([]);
   const [noteContent, setNoteContent] = useState('');
-  const [error, setError] = useState('');
+  // Removed unused error state
 
   useEffect(() => {
     // Get token from URL if present
@@ -23,7 +23,7 @@ export default function Dashboard() {
       .catch(() => window.location.href = '/signin');
     axios.get(`${API}/notes`, { headers: { Authorization: `Bearer ${token}` } })
       .then(res => setNotes(res.data.notes))
-      .catch(() => setError('Failed to fetch notes'));
+      .catch(() => {/* error handling removed */});
   }, []);
 
   const handleDeleteNote = async (id: string) => {
@@ -32,7 +32,7 @@ export default function Dashboard() {
       await axios.delete(`${API}/notes/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       setNotes(notes.filter(note => note._id !== id));
     } catch {
-      setError('Failed to delete note');
+      /* error handling removed */
     }
   };
 
@@ -43,7 +43,7 @@ export default function Dashboard() {
       setNotes([...notes, res.data.note]);
       setNoteContent('');
     } catch {
-      setError('Failed to create note');
+      /* error handling removed */
     }
   };
 
