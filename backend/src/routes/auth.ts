@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import OTP from '../models/OTP';
 import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
@@ -23,17 +24,17 @@ router.post('/signup', async (req: Request, res: Response) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
     await OTP.create({ email, otp, expiresAt });
-    // Send OTP
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-    });
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
+    // Send OTP using Resend
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const { error } = await resend.emails.send({
+      from: 'Notes App <onboarding@resend.dev>',
+      to: [email],
       subject: 'Your OTP',
-      text: `Your OTP is ${otp}`
+      html: `<strong>Your OTP is ${otp}</strong>`
     });
+    if (error) {
+      return res.status(500).json({ message: 'Failed to send OTP', error });
+    }
     return res.json({ message: 'OTP sent to email' });
   }
   // New user: require name and email
@@ -43,16 +44,17 @@ router.post('/signup', async (req: Request, res: Response) => {
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
   await OTP.create({ email, otp, expiresAt });
   // Send OTP
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-  });
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: email,
+  // Send OTP using Resend
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const { error } = await resend.emails.send({
+    from: 'Notes App <onboarding@resend.dev>',
+    to: [email],
     subject: 'Your OTP',
-    text: `Your OTP is ${otp}`
+    html: `<strong>Your OTP is ${otp}</strong>`
   });
+  if (error) {
+    return res.status(500).json({ message: 'Failed to send OTP', error });
+  }
   res.json({ message: 'OTP sent to email' });
 });
 
