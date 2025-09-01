@@ -89,5 +89,17 @@ FRONTEND_URL=https://your-frontend-url
 VITE_API_URL=https://your-backend-url
 ```
 
+## Project Notes
+
+- This app supports passwordless login using email OTP and Google OAuth.
+- OTPs are sent to the user's email using SendGrid.
+- **Important:** OTPs are stored in the `OTP` collection in your database for verification.
+- For development and debugging, you can view OTPs directly in the database (e.g., MongoDB Atlas dashboard).
+- The backend is built with Node.js/Express/TypeScript and deployed on Railway.
+- The frontend is built with React (Vite) and deployed on Vercel.
+- All environment variables must be set correctly for both backend and frontend to work.
+- For any issues with email delivery, check your SendGrid sender verification and API key.
+- Check spam folder for OTP
+
 ## License
 MIT
